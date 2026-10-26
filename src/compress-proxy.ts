@@ -39,8 +39,17 @@ export interface CompressProxyOptions {
   mode?: CompressProxyMode
 }
 
-/** 从 dsh 启动参数解析 --port（插件运行在 dsh 进程内，argv 即 dsh 的）。 */
-export function resolveTargetPort(): number {
+/**
+ * 解析上游 dsh 端口。优先显式值，其次 dsh 启动参数 `--port`
+ * （插件运行在 dsh 进程内，argv 即 dsh 的），最后历史默认 3080。
+ *
+ * @param explicit - 调用方已知的权威端口（如 0.2.x `webServer.port`）。
+ * @returns 合法端口号。
+ */
+export function resolveTargetPort(explicit?: number): number {
+  if (typeof explicit === 'number' && Number.isFinite(explicit) && explicit > 0 && explicit < 65536) {
+    return explicit
+  }
   const argv = process.argv
   const idx = argv.indexOf('--port')
   if (idx !== -1 && idx + 1 < argv.length) {
@@ -48,6 +57,39 @@ export function resolveTargetPort(): number {
     if (Number.isFinite(value) && value > 0 && value < 65536) return value
   }
   return 3080
+}
+
+/**
+ * 取 dsh 本体真正的监听端口（跨版本软取，绝不抛错）。
+ *
+ * dsh 0.2.x 的 `webServer` 暴露权威监听端口 getter（`lib/types/index.d.ts:152`
+ * `get port(): number | undefined`，"the OS-assigned value when config.port is
+ * 0, or undefined before listen binds"）与 `getOrigin()`（:167）。当装配端口
+ * 来自 profile 配置而非 `--port` 时，argv 解析会退回默认 3080（错的），此时
+ * 只有 webServer 知道真值——本函数优先用它，读到 undefined（旧版无 getter /
+ * 尚未 listen）再回退 {@link resolveTargetPort}。
+ *
+ * @param webServer - `ctx.webServer`（结构子集；可传 undefined）。
+ * @returns 端口号；任何异常都静默回退 argv 解析。
+ */
+export function resolveBoundPort(webServer?: unknown): number {
+  try {
+    const face = webServer as { port?: unknown; getOrigin?: unknown } | undefined
+    const port = face?.port
+    if (typeof port === 'number' && Number.isFinite(port) && port > 0 && port < 65536) return port
+    if (typeof face?.getOrigin === 'function') {
+      // 旧于 `port` getter 的版本没有它；`getOrigin()` 在 listen 前会 throw，
+      // 一并由外层 catch 兜住回退。
+      const origin = (face.getOrigin as () => unknown)()
+      if (typeof origin === 'string') {
+        const parsed = Number(new URL(origin).port)
+        if (Number.isFinite(parsed) && parsed > 0 && parsed < 65536) return parsed
+      }
+    }
+  } catch {
+    // 旧版 dsh（无 port/getOrigin）或尚未 listen：回退 argv。
+  }
+  return resolveTargetPort()
 }
 
 /**
@@ -181,6 +223,13 @@ export function startCompressProxy(options: CompressProxyOptions): {
  *     恰好满足；官方 gzip 中间件对 webserver 全部响应生效，插件路由也在内。
  *       · dsh ≤0.1.1（3080/3081 实测）→ 200 且无 content-encoding
  *       · dsh 0.1.5-rc.1 → 200 + content-encoding: gzip（官方压缩覆盖全部路由）
+ *       · dsh 0.2.1-rc.2（17899 实测）→ 200 + content-encoding: gzip + vary：
+ *         webServer 的 compression 配置默认已变为 `'none'`
+ *         （dsh-host-webserver/lib/types/index.d.ts:82-83），但官方 web 组合
+ *         在 bundle 层显式覆盖为 gzip（dsh-web-app/cordis.patch.yml:186-188
+ *         `compression: gzip` + level 1 + threshold 1024）——探测因此仍返回
+ *         gzip，代理按设计切 passthrough。自定义组合若不加该覆盖则上游不压，
+ *         探测返回 plain → 代理保持 gzip 模式（探针测的是实际行为，不是版本）。
  *  2. `/plugins/meow-smooth/client.js` —— 旧版 dsh 由本体提供的静态资源路由。
  *     注意：0.1.5 起客户端模块改为组合 URL `/plugins/??<id>/client.js,…&rev=…`，
  *     本路径已 404（2026-09-10 实测），故只能作备用候选，不可再作唯一依据——

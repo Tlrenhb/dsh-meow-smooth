@@ -133,10 +133,16 @@ let narrowQuery: MediaQueryList | null = null
 let panel: HTMLElement | null = null
 
 /**
- * 定位设置面板：官方 SettingsRoot 的 dialog 独有结构——`role="dialog"`
- * 的直接子级是 nav（Modal 系 dialog 直接子级是 content/footer，不命中）。
+ * 定位设置面板。两形都认（0.1.5 → 0.2.1 实测一致，均命中第一条）：
+ *  ① `[data-shortcut-modal="settings"]`：官方 SettingsRoot 面板的稳定契约
+ *     标记（v0.1.7-rc.2 与 v0.2.1-rc.2 都有；Modal 系弹层用
+ *     data-shortcut-modal 标快捷键域，非设置面板取不到 "settings" 值）；
+ *  ② `div[role="dialog"] > nav`：SettingsRoot 独有结构——role="dialog" 的
+ *     直接子级是 nav（Modal 系 dialog 直接子级是 content/footer，不命中）。
  */
 function findSettingsPanel(): HTMLElement | null {
+  const marked = document.querySelector('[data-shortcut-modal="settings"]')
+  if (marked instanceof HTMLElement && marked.getAttribute('role') === 'dialog') return marked
   const nav = document.querySelector('div[role="dialog"] > nav')
   return nav !== null ? (nav.parentElement ?? null) : null
 }
@@ -244,9 +250,13 @@ const tabObserver = new MutationObserver((records) => {
  */
 export function installSettingsMobile(): () => void {
   // 先移除上一份同标记样式（热替换重装时避免 <head> 无限堆积副本）。
-  document.querySelector('style[data-meow-smooth-settings-css]')?.remove()
+  document.querySelector(`style[${STYLE_ATTR}]`)?.remove()
   const style = document.createElement('style')
-  style.dataset.meowSettingsCss = 'true'
+  // 标记名必须与上面的移除查询一致：dataset.meowSettingsCss 落的是
+  // data-meow-settings-css（旧代码的笔误），与 STYLE_ATTR /
+  // verify 探针（verify/cdp.mjs 查 style[data-meow-smooth-settings-css]）
+  // 都对不上——热替换时上一份样式表永远删不掉。改用常量 setAttribute。
+  style.setAttribute(STYLE_ATTR, 'true')
   // 0.1.6 模块加载器认领无主 <style> 并在其他插件热替换时连坐删除——必须
   // 自报家门（同 client.ts 主样式表，左下角鲸鱼按钮 bug 根因）。
   style.dataset.plugin = 'meow-smooth'

@@ -217,6 +217,28 @@ const FAB_ATTR = 'data-meow-smooth-fab'
  *  由 tick 打上，CSS 据此隐藏色块（与 header 同进退的结构性兜底）。 */
 const HEADER_HIDDEN_ATTR = 'data-meow-smooth-header-hidden'
 
+/** 会话 header 的跨版本选择器。0.1.7 起官方把 `<header>` 从槽位宿主内部挪到
+ *  了外面（ConversationHeader 自己渲染 header，槽位变成它的子级）：
+ *    ≤0.1.6：`[data-slot="conversation.session.header"] > header`
+ *    ≥0.1.7（含 0.2.1-rc.2）：`header > [data-slot="conversation.session.header"]`
+ *  新形只能靠 :has() 表达，而选择器列表里含不支持的选择器会让**整条规则**
+ *  失效（CSS 2.1 行为）——所以两条形永远拆成两条独立规则（见 bothForms）：
+ *  老浏览器只丢新形那条，老版本 dsh 照常生效。 */
+const HEADER_SEL_OLD = '[data-slot="conversation.session.header"] > header'
+const HEADER_SEL_NEW = 'header:has(> [data-slot="conversation.session.header"])'
+/** titleRow（面包屑所在行）的跨版本选择器：旧形在 header 内、新形在槽位宿主
+ *  内（槽位宿主 display:contents，不进布局）。 */
+const TITLE_ROW_OLD = `${HEADER_SEL_OLD} > div:first-child`
+const TITLE_ROW_NEW = `${HEADER_SEL_NEW} > [data-slot="conversation.session.header"] > div:first-child`
+
+/** 把一段 CSS 模板按旧/新两形各生成一份独立规则：`%H%` = header 选择器，
+ *  `%T%` = titleRow 选择器。两条规则声明相同，靠浏览器各自命中哪一形。 */
+function bothForms(tpl: string): string {
+  const forOne = (headerSel: string, titleSel: string): string =>
+    tpl.split('%H%').join(headerSel).split('%T%').join(titleSel)
+  return `${forOne(HEADER_SEL_OLD, TITLE_ROW_OLD)}\n${forOne(HEADER_SEL_NEW, TITLE_ROW_NEW)}`
+}
+
 const FOLD_CSS = `
 /* 过渡放基础态：折叠/展开双向都有动画。 */
 [data-composer-card] [data-input-scroll] { transition: max-height 150ms ease; }
@@ -233,9 +255,9 @@ const FOLD_CSS = `
 }
 /* 输入法激活：隐藏原生 header（悬浮条独占顶部，避免重复与遮挡）。
    imeActive 在桌面恒为 false，属性永不设置，此规则不生效。 */
-html[${IME_ROOT_ATTR}] [data-slot="conversation.session.header"] > header {
+${bothForms(`html[${IME_ROOT_ATTR}] %H% {
   display: none !important;
-}
+}`)}
 /* 悬浮 Session name 条：body 直接子级、fixed 钉屏幕顶部、最高层级，
    不与任何页面元素发生关系（不参与布局、不挡点击）。top 由 JS 按
    visualViewport.offsetTop 补偿（iOS 键盘弹起平移 layout viewport）。 */
@@ -272,9 +294,13 @@ html[${IME_ROOT_ATTR}] [data-slot="conversation.session.header"] > header {
   min-width: 0 !important;
 }
 /* 极窄（composer 行 <460px，与官方权限 chip 图标化同阈值）：隐藏 effort
-   徽标与首 span 之外的其他文字 span，把宽度全留给模型名。 */
+   徽标与首 span 之外的其他文字 span，把宽度全留给模型名。
+   注：必须用 span:not(:first-of-type)（= 第一个 span 之外的 span）而非
+   :not(:first-child)——官方 trigger 的首个子元素是 svg 图标，:first-child
+   会把模型名本身也一起隐掉（0.1.5 → 0.2.1 实测 children 顺序恒为
+   [svg 图标, span 模型名, span effort, svg 箭头]）。 */
 @container (max-width: 460px) {
-  [data-composer-card] [data-slot="conversation.input.model"] button[aria-haspopup="menu"] > span:not(:first-child) {
+  [data-composer-card] [data-slot="conversation.input.model"] button[aria-haspopup="menu"] > span:not(:first-of-type) {
     display: none;
   }
 }
@@ -345,68 +371,78 @@ html[${IME_ROOT_ATTR}] [data-slot="conversation.session.header"] > header {
   /* header 横向滑动：Session name 完整显示、绝不截断，其余动作按优化后
      的窄形态依次排在 name 后面；内容超宽时 titleRow 可左右滑动（滚动条
      隐藏，触屏原生滑动；桌面 <1024px 窄窗口同理可用 shift+滚轮）。 */
-  [data-slot="conversation.session.header"] > header > div:first-child {
-    overflow-x: auto;
-    overflow-y: hidden;
-    flex-wrap: nowrap;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
+${bothForms(`%T% {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}`)}
   /* 下拉菜单打开时放开 titleRow 的 overflow：滚动容器会裁剪绝对定位的
      菜单（overflow-x:auto 下 overflow-y 不能保持 visible，菜单被截断/
      隐藏）。开关状态由 JS 打 data-meow-smooth-menu-open 属性
      （syncHeaderMenu）：打开瞬间记录 scrollLeft 并用 transform 平移补偿，
      header 停在原处不回跳；关闭时恢复 overflow 后写回 scrollLeft，
      位置全程不变。z-index 抬高避免 transform 层叠上下文被后续内容盖住。 */
-  [data-slot="conversation.session.header"] > header > div:first-child[${HEADER_MENU_ATTR}] {
-    overflow-x: visible;
-    overflow-y: visible;
-    position: relative;
-    z-index: 200;
-  }
-
-  [data-slot="conversation.session.header"] > header > div:first-child::-webkit-scrollbar {
-    display: none;
-  }
-  [data-slot="conversation.session.header"] > header > div:first-child > div:first-child {
-    flex: none;
-    min-width: max-content;
-    overflow: visible;
-  }
-  [data-slot="conversation.session.header"] > header > div:first-child > div:first-child > nav {
-    flex: none;
-    min-width: max-content;
-    overflow: visible;
-  }
-  [data-slot="conversation.session.header"] > header > div:first-child > div:first-child > nav > span {
-    flex: none;
-    white-space: nowrap;
-  }
-  [data-slot="conversation.session.header"] > header > div:first-child > div:first-child > nav button {
-    max-width: none;
-    overflow: visible;
-    text-overflow: clip;
-  }
-  [data-slot="conversation.session.header"] > header > div:first-child > div:nth-child(2) {
-    margin-left: 10px;
-  }
+${bothForms(`%T%[${HEADER_MENU_ATTR}] {
+  overflow-x: visible;
+  overflow-y: visible;
+  position: relative;
+  z-index: 200;
+}`)}
+${bothForms(`%T%::-webkit-scrollbar {
+  display: none;
+}`)}
+${bothForms(`%T% > div:first-child {
+  flex: none;
+  min-width: max-content;
+  overflow: visible;
+}`)}
+${bothForms(`%T% > div:first-child > nav {
+  flex: none;
+  min-width: max-content;
+  overflow: visible;
+}`)}
+${bothForms(`%T% > div:first-child > nav > span {
+  flex: none;
+  white-space: nowrap;
+}`)}
+${bothForms(`%T% > div:first-child > nav button {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+}`)}
+${bothForms(`%T% > div:nth-child(2) {
+  margin-left: 10px;
+}`)}
   /* 消息操作行横向滑动（需求 17）：复制/点赞/备注/分支按钮 + 时间·用时·
      首token·吐字速度统计在手机上一行放不下，原生被祖先裁剪。把行自身
      变成横向滚动容器：max-width 钳回容器宽（用户行 align-items:flex-end
      下行宽随内容、超宽时向左溢出），内容原样排开、超宽部分左右滑。
-     锚点=容器 data-time-hover-root（官方只在用户行/turn-tail 根两处使用）
-     的直接子级 [class*='_actions']（MessageIconActions 的 [hash]_actions，
-     哈希前缀随版本变、_actions 尾缀不变；直接子级限定避免误伤页面其他
-     模块的 *_actions）。滚动条隐藏 + 触屏惯性滚动；橡皮筋抑制 JS 按计算
+     锚点=消息容器的稳定结构属性 + 行的 CSS Modules 哈希类名尾缀
+     [class*='_actions']（MessageIconActions 的 [hash]_actions，哈希前缀随
+     版本变、_actions 尾缀不变）。容器属性跨版本实测：
+       - ≤0.1.1：data-time-hover-root（0.1.2-rc.1 起官方已无此属性，实测
+         0.1.2-rc.1 / 0.1.5-rc.3 / 0.1.6-alpha.2 / 0.1.7-rc.2 / 0.2.1-rc.2
+         全部 0 命中）——保留兼容老版本；
+       - ≥0.1.2：用户行 div[class*='_userRow'] / AI 轮尾 div[data-turn-tail]
+         （两者都是 MessageIconActions 行的**直接父级**，0.1.5-rc.3 与
+         0.2.1-rc.2 的结构逐层一致）。
+     直接子级限定避免误伤页面其他模块的 *_actions（如设置弹窗内容区的
+     [hash]_actions）。滚动条隐藏 + 触屏惯性滚动；橡皮筋抑制 JS 按计算
      样式自动把该行识别为可滚动祖先（到边界才拦），无需额外配合。 */
-  [data-time-hover-root] > [class*='_actions'] {
+  [data-time-hover-root] > [class*='_actions'],
+  [class*='_userRow'] > [class*='_actions'],
+  [data-turn-tail] > [class*='_actions'] {
     max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
-  [data-time-hover-root] > [class*='_actions']::-webkit-scrollbar {
+  [data-time-hover-root] > [class*='_actions']::-webkit-scrollbar,
+  [class*='_userRow'] > [class*='_actions']::-webkit-scrollbar,
+  [data-turn-tail] > [class*='_actions']::-webkit-scrollbar {
     display: none;
   }
   /* 手机端禁用橡皮筋回弹（app 化观感）：overscroll-behavior 拦文档级
@@ -511,10 +547,10 @@ html[${FURL_ROOT_ATTR}] [data-slot="root"] > [data-sidebar-collapsed] > :first-c
  * （左右不对称、furl 后计算值被污染，实测 20/28 不可靠）。margin 挂
  * 过渡，展开/折叠时标题平滑让位/回归。 */
 @media (max-width: 1023px) {
-  html[${FURL_ROOT_ATTR}] [data-slot="conversation.session.header"] > header {
-    margin-left: 56px;
-    transition: margin-left 200ms var(--ds-ease-in-out, ease);
-  }
+${bothForms(`html[${FURL_ROOT_ATTR}] %H% {
+  margin-left: 56px;
+  transition: margin-left 200ms var(--ds-ease-in-out, ease);
+}`)}
 }
 /* 小方块 = 原生侧边栏的"顶部切片"重绘（v3，猫猫拍板）：原竖条宽度
    56px、竖条同款底色（sidebar-fill）、右缘同款灰色竖线（border-l1，
@@ -617,10 +653,13 @@ html[${IME_ROOT_ATTR}] [${FAB_ATTR}] {
   html[data-meow-smooth-furled]:has([data-sidebar-right-panel="fullscreen"][data-sidebar-right-open]) [data-slot="root"] [class*="_centerCol"] {
     padding-right: calc(100% - 50vw);
   }
-  /* 面板本体：全屏覆盖改为钉右半屏。官方全屏态 = position:fixed; inset:0
-     + 内联 style width:100%（SidebarPanel JSX 契约）——width 必须
-     !important 压过内联，left 压过 inset:0 的 0；top/right/bottom 官方值
-     本就是 0，不重复声明。z-index 40 与官方一致不动。
+  /* 面板本体：全屏覆盖改为钉右半屏。官方全屏态的几何（0.2.1-rc.2 实测）=
+     面板 position:absolute; top:0; bottom:0; right:0 + 内联 style width:100vw
+     （0.1.6 是 position:fixed; inset:0 + width:100%，两种形态下本规则都成立）
+     ——width 必须 !important 压过内联；left:50% 与官方 right:0 一起把
+     width:auto 解成"右半屏"（绝对定位元素 left+right 双锚 + width:auto =
+     填满两锚之间）；top/bottom 官方值本就是 0，不重复声明。
+     z-index 40 与官方一致不动。
      只绑 fullscreen 不绑 open：面板常驻挂载（收起仅 translate(100%)
      滑出屏外），若绑定 open，关面板瞬间属性消失 → 几何先跳回全屏再
      播滑出，肉眼可见地"变宽"；不绑则半宽滑出，与滑入对称。 */
@@ -912,17 +951,47 @@ function imeActive(): boolean {
   return focusRecent
 }
 
-/** 当前会话名（header 面包屑的当前段：nav 里最后一个 disabled 按钮）。 */
-function sessionName(): string {
-  const nameEl = document.querySelector('[data-slot="conversation.session.header"] nav button:disabled')
-  return nameEl?.textContent?.trim() ?? ''
+/** 会话 header 元素（跨版本）。0.1.7 起官方把 `<header>` 从会话 header 槽位
+ *  宿主里挪到了外面（详见 HEADER_SEL_OLD/NEW 注释）：
+ *    ≤0.1.6：host > header；≥0.1.7：header > host（host 是 display:contents
+ *    的槽位宿主，无盒子）。两形都认；都找不到返回 null（调用方一律 no-op）。 */
+function headerElement(): HTMLElement | null {
+  const host = document.querySelector('[data-slot="conversation.session.header"]')
+  if (host === null) return null
+  const parent = host.parentElement
+  if (parent instanceof HTMLElement && parent.tagName === 'HEADER') return parent
+  const inner = host.querySelector(':scope > header')
+  return inner instanceof HTMLElement ? inner : null
 }
 
-/** header 的 titleRow（面包屑所在行；header 首个子 div，横向滑动的宿主）。 */
+/** 当前会话名（header 面包屑的当前段）。跨版本：
+ *  ≤0.1.6 = nav 里最后一个 disabled 按钮（button.crumbCurrent[disabled]）；
+ *  ≥0.1.7 = 纯 span（[hash]_crumbCurrent，哈希前缀随版本变、尾缀不变，
+ *  当前段不再是按钮）。两者都试，再兜底取最后一个面包屑段的文本。 */
+function sessionName(): string {
+  const scope = document.querySelector('[data-slot="conversation.session.header"]')
+  if (scope === null) return ''
+  const current = scope.querySelector<HTMLElement>('[class*="_crumbCurrent"], nav button:disabled')
+  const text = current?.textContent?.trim()
+  if (text !== undefined && text !== '') return text
+  const segments = scope.querySelectorAll<HTMLElement>('nav [class*="_crumbSeg"]')
+  const last = segments[segments.length - 1]
+  return last?.textContent?.trim() ?? ''
+}
+
+/** header 的 titleRow（面包屑所在行；横向滑动的宿主）。跨版本：
+ *  ≥0.1.7 = 槽位宿主（display:contents）的首个子元素；≤0.1.6 = 槽位宿主里
+ *  header 的首个子元素。room 不在场（新会话空壳）时返回 null。 */
 function titleRow(): HTMLElement | null {
-  const header = document.querySelector('[data-slot="conversation.session.header"] > header')
-  if (header === null || !(header.firstElementChild instanceof HTMLElement)) return null
-  return header.firstElementChild
+  const host = document.querySelector('[data-slot="conversation.session.header"]')
+  if (host === null) return null
+  const first = host.firstElementChild
+  if (!(first instanceof HTMLElement)) return null
+  // 旧结构：槽位宿主里第一个元素就是 <header>，titleRow 在它内部
+  if (first.tagName === 'HEADER') {
+    return first.firstElementChild instanceof HTMLElement ? first.firstElementChild : null
+  }
+  return first
 }
 
 /** 菜单打开期间 header 原位的横向位移（打开瞬间的 scrollLeft）。 */
@@ -1388,12 +1457,15 @@ function onModeLabelToggle(event: MouseEvent): void {
   if (!(target instanceof Element)) return
   const label = target.closest<HTMLElement>('[data-slot="conversation.session.header.actions"] span[title]')
   if (label === null) return
-  if (label.dataset.meowFoldModeExpanded === 'true') {
-    delete label.dataset.meowFoldModeExpanded
+  // 标记名必须与下面 onModeLabelDismiss 的查询一致：dataset.meowSmoothModeExpanded
+  // → data-meow-smooth-mode-expanded（旧代码写的是 meowFoldModeExpanded，落的
+  // 是另一个属性，导致"点别处收起"永远查不到已展开的标签 → 修既有笔误）。
+  if (label.dataset.meowSmoothModeExpanded === 'true') {
+    delete label.dataset.meowSmoothModeExpanded
     label.style.fontSize = ''
     label.style.maxWidth = ''
   } else {
-    label.dataset.meowFoldModeExpanded = 'true'
+    label.dataset.meowSmoothModeExpanded = 'true'
     label.style.fontSize = '12px' // 恢复文本（CSS 折叠态 font-size:0）
     label.style.maxWidth = '180px'
   }
@@ -1616,7 +1688,7 @@ function populateFabIcon(): void {
  *  （全屏视图如 femGen 画布盖在 header 上）。值不变不写，避免无谓的
  *  样式重算。 */
 function syncFabHeight(): void {
-  const header = document.querySelector('[data-slot="conversation.session.header"] > header')
+  const header = headerElement()
   const fab = sidebarFab()
   // 同进退：header 计算样式 display:none（如打字 IME 态，IME 由 html[ime]
   // CSS 规则即时同步，这里是兜住任何其他隐藏来源的结构性兜底）→ 打隐藏
@@ -1627,11 +1699,13 @@ function syncFabHeight(): void {
     return
   }
   // 同进退的边界：header 被 display:none 隐藏 → 色块退场。但"无会话的
-  // 空壳 header"（新会话页：官方同样以 display:none 渲染、且无任何子
-  // 元素）不算隐藏——那里色块是唯一的侧边栏入口（猫猫拍板过"新会话页
-  // 只留那一点点 sidebar"）。区分锚点：空壳无子元素；打字 IME 态
-  // display:none 时子树保持挂载，不受影响。
-  const isEmptyShell = header.firstElementChild === null
+  // 空壳 header"（新会话页：官方以 headerBlank 渲染、无任何导航/按钮）不算
+  // 隐藏——那里色块是唯一的侧边栏入口（猫猫拍板过"新会话页只留那一点点
+  // sidebar"）。判据=header 内没有导航/按钮：≤0.1.5 空壳 header 直接
+  // display:none（旧判据"无子元素"即此形）；≥0.1.6 header 恒有
+  // headerLeading + 槽位宿主两个子元素，"无子元素"永远为 false，会让空壳
+  // 页被当成"隐藏"而把色块撤掉。
+  const isEmptyShell = header.querySelector('nav, button') === null
   let hidden = !isEmptyShell && getComputedStyle(header).display === 'none'
   // 覆盖检测（display:none 查不出的"隐藏"）：全屏视图（如 femGen 画布）
   // 盖在 header 上面时，header 中心点的最顶层元素不属于 header 子树 →
@@ -1647,8 +1721,10 @@ function syncFabHeight(): void {
   }
   if (hidden) fab.setAttribute(HEADER_HIDDEN_ATTR, '1')
   else fab.removeAttribute(HEADER_HIDDEN_ATTR)
+  // 高度=header 实高（猫猫："和现有 header 一样高才规整"）；header 尚未布局
+  // （0×0，含 ≤0.1.5 空壳 display:none）→ 保持 CSS 兜底 56px。
   const h = Math.round(header.getBoundingClientRect().height)
-  if (!(h > 1)) return // 空壳 header（新会话页）→ 保持兜底 56
+  if (!(h > 1)) return
   if (fab.dataset.meowH === String(h)) return
   fab.dataset.meowH = String(h)
   fab.style.height = `${h}px`
@@ -2331,7 +2407,10 @@ function installSheetForensics(): void {
   const origRemoveChild = Node.prototype.removeChild
   Node.prototype.removeChild = function <T extends Node>(this: Node, child: T): T {
     noteCall(child)
-    return origRemoveChild.call(this, child)
+    // lib.dom 把 removeChild 声明成泛型 <T extends Node>(child: T): T，而
+    // Function.prototype.call 擦掉泛型只回 Node → 历史 TS2322（Node 不可赋给
+    // T）。运行期语义就是"原样返回入参"，故按入参类型收敛。
+    return origRemoveChild.call(this, child) as T
   }
   const mo = new MutationObserver((muts) => {
     for (const mut of muts) {
@@ -2581,8 +2660,10 @@ export function apply(ctx: any): void {
     for (const mutation of mutations) {
       if (mutation.type === 'attributes') {
         const target = mutation.target
-        if (target instanceof Element
-          && target.closest('[data-slot="conversation.session.header"] > header') !== null) {
+        // header 子树内的 aria-expanded 变化才算菜单开关（跨版本：header 在
+        // 槽位外/内两形都可能，用 headerElement() + contains 判定，不写死路径）。
+        const header = headerElement()
+        if (target instanceof Element && header !== null && header.contains(target)) {
           syncHeaderMenu()
           return
         }
@@ -2695,30 +2776,64 @@ export function apply(ctx: any): void {
   document.addEventListener('click', onDismissClick, { capture: true })
   disposers.push(() => { document.removeEventListener('click', onDismissClick, { capture: true }) })
   // 审批/提问提醒卡片（需求 12/13）：host 轮询 + 本地 pending 汇报合并。
-  // sessions 不可用时跳转回调为 undefined（卡片仍显示，提示手动切换）。
+  // 跳转会话的客户端入口跨版本换过：
+  //   ≤0.1.5：ctx.sessions.open(sessionId)（0.1.6-alpha.2 起 ClientSessions
+  //           已无 open 方法，实测 0.1.6/0.1.7-rc.2/0.2.1-rc.2 全部没有）；
+  //   ≥0.1.6：ctx.get('uiWorkspace').openSession(sessionId)——官方自己的面包屑
+  //           跳转（ConversationSessionHeader 的 open 注入）就走这条。
+  // 两形都试：uiWorkspace 优先（新版唯一且官方在用的路），sessions.open 兜旧版。
+  // 都不可用时回调保持 undefined（卡片仍显示，提示手动切换），绝不抛错。
+  const uiWorkspace = typeof ctx?.get === 'function'
+    ? ctx.get('uiWorkspace') as { openSession?: (sessionId: string) => void } | undefined
+    : undefined
   let openSessionFn: ((sessionId: string) => void) | undefined
   let refreshSessionsFn: (() => Promise<void>) | undefined
-  if (sessions === undefined || typeof sessions.open !== 'function') {
-    console.warn('[meow-smooth] sessions service unavailable; banner jump disabled')
-  } else {
+  if (uiWorkspace !== undefined && typeof uiWorkspace.openSession === 'function') {
+    openSessionFn = (sessionId: string) => { uiWorkspace.openSession?.(sessionId) }
+  } else if (sessions !== undefined && typeof sessions.open === 'function') {
     openSessionFn = (sessionId: string) => { sessions.open?.(sessionId) }
-    if (typeof sessions.refresh === 'function') {
-      refreshSessionsFn = () => sessions.refresh!()
-    }
+  } else {
+    console.warn('[meow-smooth] no session-open service (uiWorkspace.openSession / sessions.open); banner jump disabled')
+  }
+  if (sessions !== undefined && typeof sessions.refresh === 'function') {
+    refreshSessionsFn = () => sessions.refresh!()
   }
   disposers.push(installPendingBanner(openSessionFn, refreshSessionsFn))
   // 通知模块（需求 15）：页面内系统通知 + PWA/SW 桥。SW notificationclick
   // 的跳转指令与横幅跳转共用同一回调。
   notifyHandle = installNotifyClient({ openSession: openSessionFn })
   disposers.push(() => { notifyHandle?.dispose() })
+  // 会话切换观察条目（需求⑤/⑳/⑫）：两处挂载同一隐形组件 FoldDock——
+  //   ① conversation.composer.dock：会话 composer（variant==="composer"）态；
+  //   ② conversation.input.right：hero 态（空会话/新会话页）兜底。
+  // 为什么需要②（2026-10-26 实测根因，dsh 0.2.1-rc.2）：官方 InputBar 只在
+  // `variant === "composer"` 时才 renderSlot("conversation.composer.dock")
+  // （dsh-client-ui-conversation/lib/client.js:19164），而 variant 由 hero 决定
+  // （`:17821` `variant: hero ? "hero" : "composer"`，`:17545` hero = 会话壳
+  // blank）。空会话页整条 dock 槽位**不渲染** → FoldDock 压根没挂载 → 从空会话
+  // 点"New Session"/切到空会话时 onSessionSwitch 一次都不跑（功能⑤静默失效，
+  // 与插件构建无关：上游 0.8.1 在同一实例上同样不收起，A/B 已证）。
+  // input.right 的渲染条件只有 `input !== undefined && sessionId !== undefined`
+  // （`:19080`），hero 态照常挂载（活体实测 inputRightSlot=true、dockSlot=false）。
+  // 两处同时挂载是幂等的：maybeCollapseSidebar 第二次调用看到 collapsed+furl
+  // 立即早退；reportLocalPending 覆盖写同一份模块状态；撤焦 effect 第二次
+  // activeElement 已不是输入区，天然 no-op。各版本都有这两个槽位（input.right
+  // 自 0.1.3 起、dock 自 0.1.3 起），老版本多挂一处也只是一次幂等调用。
+  const foldDockInjected = (): { onSessionSwitch: () => void; reportPending: typeof reportLocalPending } => ({
+    onSessionSwitch: () => maybeCollapseSidebar(layout),
+    reportPending: reportLocalPending,
+  })
   slots.inject('conversation.composer.dock', () => slots.register({
     name: 'conversation.composer.dock',
     id: 'meow-smooth',
     order: 90,
-    inject: () => ({
-      onSessionSwitch: () => maybeCollapseSidebar(layout),
-      reportPending: reportLocalPending,
-    }),
+    inject: foldDockInjected,
+  }, FoldDock))
+  slots.inject('conversation.input.right', () => slots.register({
+    name: 'conversation.input.right',
+    id: 'meow-smooth-session-dock',
+    order: 997, // 隐形（渲染 null），排在 photo(998)/run-send(999) 前，视觉无影响
+    inject: foldDockInjected,
   }, FoldDock))
   // 运行时发送按钮：登记到发送按钮旁的控件行，恒显示，运行时按 busyEnter 设置承担插话/排队，非运行等同回车发送。
   // settingsScope 为可选服务，缺省时 useBusyEnter 回退 undefined（组件按 queue 兜底）。绑定在 apply 顶层执行一次：
@@ -2747,7 +2862,17 @@ export function apply(ctx: any): void {
         }
       }
       return {
-        submitMode: (mode: RunSendMode) => { conversation.input.for(actx).submit(mode) },
+        // conversation.input.for(actx) 在 0.1.7+ 是强约束：会话 scope 已不在场
+        // （点按钮时会话刚被换掉/回收）会抛 "requires a retained Session scope"。
+        // 按钮回调抛错会一路冒到 React 事件系统，这里收敛成告警（点一下没反应，
+        // 绝不让页面因插件报错）。
+        submitMode: (mode: RunSendMode) => {
+          try {
+            conversation.input.for(actx).submit(mode)
+          } catch (error) {
+            console.warn('[meow-smooth] run-send submit failed (session scope gone?)', error)
+          }
+        },
         useBusyEnter,
       }
     },

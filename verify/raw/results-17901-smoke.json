@@ -1,0 +1,1057 @@
+{
+  "generatedAt": "2026-10-26T05:03:58.926Z",
+  "snapshot": {
+    "gitHead": "b9e5f4e",
+    "files": {
+      "src/client.ts": {
+        "mtime": "2026-10-26T04:37:10.472Z",
+        "sha256_16": "0c7bbd8930a7349a"
+      },
+      "src/index.ts": {
+        "mtime": "2026-10-26T04:10:30.475Z",
+        "sha256_16": "e13fbb36be9f1956"
+      },
+      "src/notify-host.ts": {
+        "mtime": "2026-10-25T15:56:02.469Z",
+        "sha256_16": "405aa288099b508a"
+      },
+      "src/notify-client.ts": {
+        "mtime": "2026-10-25T15:38:10.536Z",
+        "sha256_16": "47e987ea9f8bcb08"
+      },
+      "src/settings-mobile.ts": {
+        "mtime": "2026-10-26T04:36:04.854Z",
+        "sha256_16": "c62e5346de31ae0b"
+      },
+      "src/sidebar-gesture.ts": {
+        "mtime": "2026-10-25T15:38:10.537Z",
+        "sha256_16": "587031bbdbab2357"
+      },
+      "src/auth-gate.ts": {
+        "mtime": "2026-10-25T15:50:24.709Z",
+        "sha256_16": "7b2a5dc88290ee8d"
+      },
+      "src/compress-proxy.ts": {
+        "mtime": "2026-10-25T15:49:15.449Z",
+        "sha256_16": "f6ff1225fd10812a"
+      },
+      "lib/client.js": {
+        "mtime": "2026-10-26T04:40:29.806Z",
+        "sha256_16": "f036a03d0e7bd6c3"
+      },
+      "lib/index.js": {
+        "mtime": "2026-10-26T04:40:29.802Z",
+        "sha256_16": "31b31f6023adc624"
+      },
+      "package.json": {
+        "mtime": "2026-10-26T04:10:19.886Z",
+        "sha256_16": "f9ab5ae875488150"
+      }
+    },
+    "pkgVersion": "0.8.2"
+  },
+  "targets": [
+    {
+      "label": "17901",
+      "base": "http://127.0.0.1:17901",
+      "bootUrl": "http://127.0.0.1:17901/?token=af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc",
+      "startedAt": "2026-10-26T05:03:42.770Z",
+      "facts": {
+        "mobile": {
+          "modal": {
+            "dismissed": [
+              {
+                "head": "Add an API key to get started / Configure the official DeepSeek provider to start building",
+                "action": "clicked \"Configure later\"",
+                "buttons": [
+                  "Configure later",
+                  "Save and continue"
+                ]
+              }
+            ],
+            "remaining": 0,
+            "cleared": true
+          },
+          "snapshots": {
+            "initial": {
+              "href": "http://127.0.0.1:17901/",
+              "title": "DeepSeek Harness",
+              "htmlAttrs": [
+                "lang=en",
+                "style=color-scheme: light;",
+                "data-meow-apply-stage=suppressor-registered",
+                "data-meow-smooth-gesture-loaded=v6.3-tap",
+                "data-meow-smooth-furled=true",
+                "data-sup-called=yes"
+              ],
+              "meowAttrNodes": [
+                {
+                  "tag": "HTML",
+                  "attrs": [
+                    "data-meow-apply-stage=suppressor-registered",
+                    "data-meow-smooth-gesture-loaded=v6.3-tap",
+                    "data-meow-smooth-furled=true"
+                  ]
+                },
+                {
+                  "tag": "STYLE",
+                  "attrs": [
+                    "data-meow-fold-css=true",
+                    "data-meow-sheet-epoch=1",
+                    "data-meow-sheet-born=1792991027540"
+                  ]
+                },
+                {
+                  "tag": "STYLE",
+                  "attrs": [
+                    "data-meow-smooth-settings-css=true"
+                  ]
+                },
+                {
+                  "tag": "STYLE",
+                  "attrs": [
+                    "data-meow-smooth-gesture-css=true"
+                  ]
+                },
+                {
+                  "tag": "DIV",
+                  "attrs": [
+                    "data-meow-smooth=collapsed"
+                  ]
+                },
+                {
+                  "tag": "BUTTON",
+                  "attrs": [
+                    "data-meow-smooth-fab=true"
+                  ]
+                },
+                {
+                  "tag": "DIV",
+                  "attrs": [
+                    "data-meow-smooth-pending=true"
+                  ]
+                }
+              ],
+              "meowStyles": [
+                "fold-css",
+                "settings-css",
+                "gesture-css"
+              ],
+              "disposeHook": "function",
+              "moduleLoaderKeys": [
+                "mode",
+                "pendingQueue",
+                "load",
+                "create"
+              ],
+              "moduleLoaderMode": "live",
+              "pendingQueueLen": 0,
+              "anchors": {
+                "card": true,
+                "scroll": true,
+                "input": true,
+                "sidebarCollapsed": true,
+                "sidebarRightPanel": false,
+                "sidebarRightOpen": false,
+                "questionKey": false,
+                "approvalKey": false,
+                "messageActions": false,
+                "pendingBar": true,
+                "fab": true,
+                "settingsPanel": false
+              },
+              "composer": {
+                "collapseAttr": "collapsed",
+                "inlineHeight": "24px",
+                "cardH": 86,
+                "scrollClientH": 24,
+                "scrollScrollH": 52,
+                "lineHeight": "24px",
+                "fontSize": "14px",
+                "padTop": "0px",
+                "padBottom": "0px",
+                "textLen": 0,
+                "composerInputTag": "DIV"
+              },
+              "frame": {
+                "attrs": [
+                  "data-sidebar-collapsed",
+                  "data-rightbar-collapsed"
+                ]
+              },
+              "furl": "true",
+              "foldTrace": [
+                "33870 os-ts chain=0 excl=false tgt=BUTTON ae=INPUT",
+                "33944 cld ae=BUTTON"
+              ]
+            },
+            "fold": {
+              "before": {
+                "href": "http://127.0.0.1:17901/",
+                "title": "DeepSeek Harness",
+                "htmlAttrs": [
+                  "lang=en",
+                  "style=color-scheme: light;",
+                  "data-meow-apply-stage=suppressor-registered",
+                  "data-meow-smooth-gesture-loaded=v6.3-tap",
+                  "data-meow-smooth-furled=true",
+                  "data-sup-called=yes"
+                ],
+                "meowAttrNodes": [
+                  {
+                    "tag": "HTML",
+                    "attrs": [
+                      "data-meow-apply-stage=suppressor-registered",
+                      "data-meow-smooth-gesture-loaded=v6.3-tap",
+                      "data-meow-smooth-furled=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-fold-css=true",
+                      "data-meow-sheet-epoch=1",
+                      "data-meow-sheet-born=1792991027540"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-settings-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-gesture-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth=collapsed"
+                    ]
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "attrs": [
+                      "data-meow-smooth-fab=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth-pending=true"
+                    ]
+                  }
+                ],
+                "meowStyles": [
+                  "fold-css",
+                  "settings-css",
+                  "gesture-css"
+                ],
+                "disposeHook": "function",
+                "moduleLoaderKeys": [
+                  "mode",
+                  "pendingQueue",
+                  "load",
+                  "create"
+                ],
+                "moduleLoaderMode": "live",
+                "pendingQueueLen": 0,
+                "anchors": {
+                  "card": true,
+                  "scroll": true,
+                  "input": true,
+                  "sidebarCollapsed": true,
+                  "sidebarRightPanel": false,
+                  "sidebarRightOpen": false,
+                  "questionKey": false,
+                  "approvalKey": false,
+                  "messageActions": false,
+                  "pendingBar": true,
+                  "fab": true,
+                  "settingsPanel": false
+                },
+                "composer": {
+                  "collapseAttr": "collapsed",
+                  "inlineHeight": "24px",
+                  "cardH": 86,
+                  "scrollClientH": 24,
+                  "scrollScrollH": 52,
+                  "lineHeight": "24px",
+                  "fontSize": "14px",
+                  "padTop": "0px",
+                  "padBottom": "0px",
+                  "textLen": 0,
+                  "composerInputTag": "DIV"
+                },
+                "frame": {
+                  "attrs": [
+                    "data-sidebar-collapsed",
+                    "data-rightbar-collapsed"
+                  ]
+                },
+                "furl": "true",
+                "foldTrace": [
+                  "33870 os-ts chain=0 excl=false tgt=BUTTON ae=INPUT",
+                  "33944 cld ae=BUTTON"
+                ]
+              },
+              "expanded": {
+                "href": "http://127.0.0.1:17901/",
+                "title": "DeepSeek Harness",
+                "htmlAttrs": [
+                  "lang=en",
+                  "style=color-scheme: light;",
+                  "data-meow-apply-stage=suppressor-registered",
+                  "data-meow-smooth-gesture-loaded=v6.3-tap",
+                  "data-meow-smooth-furled=true",
+                  "data-sup-called=yes"
+                ],
+                "meowAttrNodes": [
+                  {
+                    "tag": "HTML",
+                    "attrs": [
+                      "data-meow-apply-stage=suppressor-registered",
+                      "data-meow-smooth-gesture-loaded=v6.3-tap",
+                      "data-meow-smooth-furled=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-fold-css=true",
+                      "data-meow-sheet-epoch=1",
+                      "data-meow-sheet-born=1792991027540"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-settings-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-gesture-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "attrs": [
+                      "data-meow-smooth-fab=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth-pending=true"
+                    ]
+                  }
+                ],
+                "meowStyles": [
+                  "fold-css",
+                  "settings-css",
+                  "gesture-css"
+                ],
+                "disposeHook": "function",
+                "moduleLoaderKeys": [
+                  "mode",
+                  "pendingQueue",
+                  "load",
+                  "create"
+                ],
+                "moduleLoaderMode": "live",
+                "pendingQueueLen": 0,
+                "anchors": {
+                  "card": true,
+                  "scroll": true,
+                  "input": true,
+                  "sidebarCollapsed": true,
+                  "sidebarRightPanel": false,
+                  "sidebarRightOpen": false,
+                  "questionKey": false,
+                  "approvalKey": false,
+                  "messageActions": false,
+                  "pendingBar": true,
+                  "fab": true,
+                  "settingsPanel": false
+                },
+                "composer": {
+                  "collapseAttr": null,
+                  "inlineHeight": "",
+                  "cardH": 114,
+                  "scrollClientH": 52,
+                  "scrollScrollH": 52,
+                  "lineHeight": "24px",
+                  "fontSize": "14px",
+                  "padTop": "0px",
+                  "padBottom": "0px",
+                  "textLen": 0,
+                  "composerInputTag": "DIV"
+                },
+                "frame": {
+                  "attrs": [
+                    "data-sidebar-collapsed",
+                    "data-rightbar-collapsed"
+                  ]
+                },
+                "furl": "true",
+                "foldTrace": [
+                  "33870 os-ts chain=0 excl=false tgt=BUTTON ae=INPUT",
+                  "33944 cld ae=BUTTON",
+                  "34953 pd ta ae=BODY",
+                  "34953 exp! ae=BODY",
+                  "34959 os-ts chain=0 excl=false tgt=DIV ae=BODY",
+                  "35034 fi ae=DIV"
+                ]
+              },
+              "typed": {
+                "href": "http://127.0.0.1:17901/",
+                "title": "DeepSeek Harness",
+                "htmlAttrs": [
+                  "lang=en",
+                  "style=color-scheme: light;",
+                  "data-meow-apply-stage=suppressor-registered",
+                  "data-meow-smooth-gesture-loaded=v6.3-tap",
+                  "data-meow-smooth-furled=true",
+                  "data-sup-called=yes"
+                ],
+                "meowAttrNodes": [
+                  {
+                    "tag": "HTML",
+                    "attrs": [
+                      "data-meow-apply-stage=suppressor-registered",
+                      "data-meow-smooth-gesture-loaded=v6.3-tap",
+                      "data-meow-smooth-furled=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-fold-css=true",
+                      "data-meow-sheet-epoch=1",
+                      "data-meow-sheet-born=1792991027540"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-settings-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-gesture-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "attrs": [
+                      "data-meow-smooth-fab=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth-pending=true"
+                    ]
+                  }
+                ],
+                "meowStyles": [
+                  "fold-css",
+                  "settings-css",
+                  "gesture-css"
+                ],
+                "disposeHook": "function",
+                "moduleLoaderKeys": [
+                  "mode",
+                  "pendingQueue",
+                  "load",
+                  "create"
+                ],
+                "moduleLoaderMode": "live",
+                "pendingQueueLen": 0,
+                "anchors": {
+                  "card": true,
+                  "scroll": true,
+                  "input": true,
+                  "sidebarCollapsed": true,
+                  "sidebarRightPanel": false,
+                  "sidebarRightOpen": false,
+                  "questionKey": false,
+                  "approvalKey": false,
+                  "messageActions": false,
+                  "pendingBar": true,
+                  "fab": true,
+                  "settingsPanel": false
+                },
+                "composer": {
+                  "collapseAttr": null,
+                  "inlineHeight": "",
+                  "cardH": 114,
+                  "scrollClientH": 52,
+                  "scrollScrollH": 52,
+                  "lineHeight": "24px",
+                  "fontSize": "14px",
+                  "padTop": "0px",
+                  "padBottom": "0px",
+                  "textLen": 0,
+                  "composerInputTag": "DIV"
+                },
+                "frame": {
+                  "attrs": [
+                    "data-sidebar-collapsed",
+                    "data-rightbar-collapsed"
+                  ]
+                },
+                "furl": "true",
+                "foldTrace": [
+                  "33870 os-ts chain=0 excl=false tgt=BUTTON ae=INPUT",
+                  "33944 cld ae=BUTTON",
+                  "34953 pd ta ae=BODY",
+                  "34953 exp! ae=BODY",
+                  "34959 os-ts chain=0 excl=false tgt=DIV ae=BODY",
+                  "35034 fi ae=DIV"
+                ]
+              },
+              "after": {
+                "href": "http://127.0.0.1:17901/",
+                "title": "DeepSeek Harness",
+                "htmlAttrs": [
+                  "lang=en",
+                  "style=color-scheme: light;",
+                  "data-meow-apply-stage=suppressor-registered",
+                  "data-meow-smooth-gesture-loaded=v6.3-tap",
+                  "data-meow-smooth-furled=true",
+                  "data-sup-called=yes"
+                ],
+                "meowAttrNodes": [
+                  {
+                    "tag": "HTML",
+                    "attrs": [
+                      "data-meow-apply-stage=suppressor-registered",
+                      "data-meow-smooth-gesture-loaded=v6.3-tap",
+                      "data-meow-smooth-furled=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-fold-css=true",
+                      "data-meow-sheet-epoch=1",
+                      "data-meow-sheet-born=1792991027540"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-settings-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "STYLE",
+                    "attrs": [
+                      "data-meow-smooth-gesture-css=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth=collapsed"
+                    ]
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "attrs": [
+                      "data-meow-smooth-fab=true"
+                    ]
+                  },
+                  {
+                    "tag": "DIV",
+                    "attrs": [
+                      "data-meow-smooth-pending=true"
+                    ]
+                  }
+                ],
+                "meowStyles": [
+                  "fold-css",
+                  "settings-css",
+                  "gesture-css"
+                ],
+                "disposeHook": "function",
+                "moduleLoaderKeys": [
+                  "mode",
+                  "pendingQueue",
+                  "load",
+                  "create"
+                ],
+                "moduleLoaderMode": "live",
+                "pendingQueueLen": 0,
+                "anchors": {
+                  "card": true,
+                  "scroll": true,
+                  "input": true,
+                  "sidebarCollapsed": true,
+                  "sidebarRightPanel": false,
+                  "sidebarRightOpen": false,
+                  "questionKey": false,
+                  "approvalKey": false,
+                  "messageActions": false,
+                  "pendingBar": true,
+                  "fab": true,
+                  "settingsPanel": false
+                },
+                "composer": {
+                  "collapseAttr": "collapsed",
+                  "inlineHeight": "24px",
+                  "cardH": 86,
+                  "scrollClientH": 24,
+                  "scrollScrollH": 52,
+                  "lineHeight": "24px",
+                  "fontSize": "14px",
+                  "padTop": "0px",
+                  "padBottom": "0px",
+                  "textLen": 0,
+                  "composerInputTag": "DIV"
+                },
+                "frame": {
+                  "attrs": [
+                    "data-sidebar-collapsed",
+                    "data-rightbar-collapsed"
+                  ]
+                },
+                "furl": "true",
+                "foldTrace": [
+                  "33944 cld ae=BUTTON",
+                  "34953 pd ta ae=BODY",
+                  "34953 exp! ae=BODY",
+                  "34959 os-ts chain=0 excl=false tgt=DIV ae=BODY",
+                  "35034 fi ae=DIV",
+                  "37285 os-ts chain=0 excl=false tgt=DIV ae=DIV",
+                  "37363 fo ae=BODY",
+                  "37363 cld ae=BODY"
+                ]
+              }
+            }
+          },
+          "pendingJson": null,
+          "shots": {
+            "initial": "/root/ws/meow-smooth/verify/shots/17901-mobile-initial.png"
+          },
+          "meowRev": "4a7f4e23d46f",
+          "finalErrors": [],
+          "finalSnapshot": {
+            "href": "http://127.0.0.1:17901/",
+            "title": "DeepSeek Harness",
+            "htmlAttrs": [
+              "lang=en",
+              "style=color-scheme: light;",
+              "data-meow-apply-stage=suppressor-registered",
+              "data-meow-smooth-gesture-loaded=v6.3-tap",
+              "data-meow-smooth-furled=true",
+              "data-sup-called=yes"
+            ],
+            "meowAttrNodes": [
+              {
+                "tag": "HTML",
+                "attrs": [
+                  "data-meow-apply-stage=suppressor-registered",
+                  "data-meow-smooth-gesture-loaded=v6.3-tap",
+                  "data-meow-smooth-furled=true"
+                ]
+              },
+              {
+                "tag": "STYLE",
+                "attrs": [
+                  "data-meow-fold-css=true",
+                  "data-meow-sheet-epoch=1",
+                  "data-meow-sheet-born=1792991027540"
+                ]
+              },
+              {
+                "tag": "STYLE",
+                "attrs": [
+                  "data-meow-smooth-settings-css=true"
+                ]
+              },
+              {
+                "tag": "STYLE",
+                "attrs": [
+                  "data-meow-smooth-gesture-css=true"
+                ]
+              },
+              {
+                "tag": "DIV",
+                "attrs": [
+                  "data-meow-smooth=collapsed"
+                ]
+              },
+              {
+                "tag": "BUTTON",
+                "attrs": [
+                  "data-meow-smooth-fab=true"
+                ]
+              },
+              {
+                "tag": "DIV",
+                "attrs": [
+                  "data-meow-smooth-pending=true"
+                ]
+              }
+            ],
+            "meowStyles": [
+              "fold-css",
+              "settings-css",
+              "gesture-css"
+            ],
+            "disposeHook": "function",
+            "moduleLoaderKeys": [
+              "mode",
+              "pendingQueue",
+              "load",
+              "create"
+            ],
+            "moduleLoaderMode": "live",
+            "pendingQueueLen": 0,
+            "anchors": {
+              "card": true,
+              "scroll": true,
+              "input": true,
+              "sidebarCollapsed": true,
+              "sidebarRightPanel": false,
+              "sidebarRightOpen": false,
+              "questionKey": false,
+              "approvalKey": false,
+              "messageActions": false,
+              "pendingBar": true,
+              "fab": true,
+              "settingsPanel": false
+            },
+            "composer": {
+              "collapseAttr": "collapsed",
+              "inlineHeight": "24px",
+              "cardH": 86,
+              "scrollClientH": 24,
+              "scrollScrollH": 52,
+              "lineHeight": "24px",
+              "fontSize": "14px",
+              "padTop": "0px",
+              "padBottom": "0px",
+              "textLen": 0,
+              "composerInputTag": "DIV"
+            },
+            "frame": {
+              "attrs": [
+                "data-sidebar-collapsed",
+                "data-rightbar-collapsed"
+              ]
+            },
+            "furl": "true",
+            "foldTrace": [
+              "33944 cld ae=BUTTON",
+              "34953 pd ta ae=BODY",
+              "34953 exp! ae=BODY",
+              "34959 os-ts chain=0 excl=false tgt=DIV ae=BODY",
+              "35034 fi ae=DIV",
+              "37285 os-ts chain=0 excl=false tgt=DIV ae=DIV",
+              "37363 fo ae=BODY",
+              "37363 cld ae=BODY"
+            ]
+          },
+          "failedRequests": [],
+          "httpErrors": [],
+          "requestCount": 76
+        }
+      },
+      "http": {
+        "auth": {
+          "status": 303,
+          "location": "/",
+          "gotCookie": true
+        }
+      },
+      "unstable": false,
+      "fingerprintStart": {
+        "pendingStatus": 200,
+        "hostVersion": "0.8.2",
+        "bootToken": "af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc",
+        "error": null
+      },
+      "fingerprintEnd": {
+        "pendingStatus": 200,
+        "hostVersion": "0.8.2",
+        "bootToken": "af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc",
+        "error": null
+      },
+      "finishedAt": "2026-10-26T05:03:58.925Z",
+      "bootLogPath": "/tmp/dsh015-boot.log"
+    }
+  ],
+  "results": [
+    {
+      "shots": [
+        "/root/ws/meow-smooth/verify/shots/17901-mobile-initial.png"
+      ],
+      "details": {
+        "jserrs": [],
+        "failed": []
+      },
+      "repro": "",
+      "owner": "",
+      "target": "17901",
+      "id": "PAGE-1",
+      "group": "页面运行时",
+      "title": "移动视口整轮无 pageerror（插件脚本硬故障的第一信号）",
+      "status": "PASS",
+      "evidence": "Runtime.exceptionThrown=0；注入式早鸟 window.__verifyErrors 中 error 类 0 条；Network.loadingFailed=0"
+    },
+    {
+      "shots": [],
+      "details": {
+        "rejs": []
+      },
+      "repro": "node verify/run-all.mjs --only PAGE-2",
+      "owner": "",
+      "target": "17901",
+      "id": "PAGE-2",
+      "group": "页面运行时",
+      "title": "无 unhandledrejection（未捕获 promise 拒绝）",
+      "status": "PASS",
+      "evidence": "unhandledrejection=0"
+    },
+    {
+      "shots": [],
+      "details": {
+        "localFailed": [],
+        "localHttp": [],
+        "thirdParty": [],
+        "failed": [],
+        "httpErrors": []
+      },
+      "repro": "node verify/run-all.mjs --only PAGE-3",
+      "owner": "",
+      "target": "17901",
+      "id": "PAGE-3",
+      "group": "页面运行时",
+      "title": "被测实例同源资源无失败请求 / 无 4xx-5xx",
+      "status": "PASS",
+      "evidence": "同源 loadingFailed=0；同源 HTTP 错误=0（含 /plugins/meow-smooth/* 全部 200）\n无第三方资源失败"
+    },
+    {
+      "shots": [],
+      "details": {
+        "attrs": [
+          {
+            "tag": "HTML",
+            "attrs": [
+              "data-meow-apply-stage=suppressor-registered",
+              "data-meow-smooth-gesture-loaded=v6.3-tap",
+              "data-meow-smooth-furled=true"
+            ]
+          },
+          {
+            "tag": "STYLE",
+            "attrs": [
+              "data-meow-fold-css=true",
+              "data-meow-sheet-epoch=1",
+              "data-meow-sheet-born=1792991027540"
+            ]
+          },
+          {
+            "tag": "STYLE",
+            "attrs": [
+              "data-meow-smooth-settings-css=true"
+            ]
+          },
+          {
+            "tag": "STYLE",
+            "attrs": [
+              "data-meow-smooth-gesture-css=true"
+            ]
+          },
+          {
+            "tag": "DIV",
+            "attrs": [
+              "data-meow-smooth=collapsed"
+            ]
+          },
+          {
+            "tag": "BUTTON",
+            "attrs": [
+              "data-meow-smooth-fab=true"
+            ]
+          },
+          {
+            "tag": "DIV",
+            "attrs": [
+              "data-meow-smooth-pending=true"
+            ]
+          }
+        ],
+        "disposeHook": "function",
+        "htmlAttrs": [
+          "lang=en",
+          "style=color-scheme: light;",
+          "data-meow-apply-stage=suppressor-registered",
+          "data-meow-smooth-gesture-loaded=v6.3-tap",
+          "data-meow-smooth-furled=true",
+          "data-sup-called=yes"
+        ]
+      },
+      "repro": "node verify/cdp.mjs --url <base> --dump-dom",
+      "owner": "",
+      "target": "17901",
+      "id": "BUNDLE-4",
+      "group": "client bundle 加载",
+      "title": "插件运行时产物存在（html 标记 + FAB + pending 条 + dispose 钩子）",
+      "status": "PASS",
+      "evidence": "html[data-meow-smooth-gesture-loaded]=true，html[data-meow-apply-stage]=true\nbutton[data-meow-smooth-fab]=true，div[data-meow-smooth-pending]=true\ntypeof window.__meowSmoothClientDispose=function\n带 data-meow* 属性的节点 7 个：HTML[data-meow-apply-stage=suppressor-registered data-meow-smooth-gesture-loaded=v6.3-tap data-meow-smooth-furled=true] / STYLE[data-meow-fold-css=true data-meow-sheet-epoch=1 data-meow-sheet-born=1792991027540] / STYLE[data-meow-smooth-settings-css=true] / STYLE[data-meow-smooth-gesture-css=true] / DIV[data-meow-smooth=collapsed] / BUTTON[data-meow-smooth-fab=true]"
+    },
+    {
+      "shots": [],
+      "details": {
+        "core": {
+          "[data-composer-card]": true,
+          "[data-input-scroll]": true,
+          "[data-composer-input]": true
+        },
+        "versioned": {
+          "[data-sidebar-right-panel]": false,
+          "[data-sidebar-right-open]": false
+        }
+      },
+      "repro": "node verify/cdp.mjs --url <base> --selectors \"[data-composer-card],[data-input-scroll],[data-composer-input],[data-sidebar-right-panel]\"",
+      "owner": "",
+      "target": "17901",
+      "id": "ANCHOR-1",
+      "group": "DOM 锚点契约",
+      "title": "核心 composer 锚点存在（右栏锚点按上游版本记为观察项）",
+      "status": "PASS",
+      "evidence": "硬要求（插件折叠立足点）：[data-composer-card]: true，[data-input-scroll]: true，[data-composer-input]: true\n观察项（上游 0.2.x 新增元素，旧版缺失非回归）：[data-sidebar-right-panel]: false，[data-sidebar-right-open]: false\n硬要求锚点齐全"
+    },
+    {
+      "shots": [
+        "/root/ws/meow-smooth/verify/shots/17901-mobile-typed.png",
+        "/root/ws/meow-smooth/verify/shots/17901-mobile-folded.png"
+      ],
+      "details": {
+        "verdict": {
+          "expected": 24,
+          "got": 24,
+          "line": 24,
+          "pad": 0,
+          "tolerance": 3,
+          "ok": true,
+          "attr": "collapsed",
+          "inline": "24px"
+        },
+        "editableOk": false,
+        "editableProbe": {
+          "exists": true,
+          "tag": "DIV",
+          "isCE": false,
+          "ceAttr": "false",
+          "taCount": 0,
+          "editable": false
+        },
+        "expandOk": true,
+        "typeRes": {
+          "ok": true,
+          "bytes": 44,
+          "attempts": 1
+        },
+        "focusState": {
+          "isInput": true,
+          "tag": "DIV",
+          "attr": null
+        },
+        "before": {
+          "collapseAttr": "collapsed",
+          "inlineHeight": "24px",
+          "cardH": 86,
+          "scrollClientH": 24,
+          "scrollScrollH": 52,
+          "lineHeight": "24px",
+          "fontSize": "14px",
+          "padTop": "0px",
+          "padBottom": "0px",
+          "textLen": 0,
+          "composerInputTag": "DIV"
+        },
+        "typed": {
+          "collapseAttr": null,
+          "inlineHeight": "",
+          "cardH": 114,
+          "scrollClientH": 52,
+          "scrollScrollH": 52,
+          "lineHeight": "24px",
+          "fontSize": "14px",
+          "padTop": "0px",
+          "padBottom": "0px",
+          "textLen": 0,
+          "composerInputTag": "DIV"
+        },
+        "after": {
+          "collapseAttr": "collapsed",
+          "inlineHeight": "24px",
+          "cardH": 86,
+          "scrollClientH": 24,
+          "scrollScrollH": 52,
+          "lineHeight": "24px",
+          "fontSize": "14px",
+          "padTop": "0px",
+          "padBottom": "0px",
+          "textLen": 0,
+          "composerInputTag": "DIV"
+        },
+        "trace": [
+          "33944 cld ae=BUTTON",
+          "34953 pd ta ae=BODY",
+          "34953 exp! ae=BODY",
+          "34959 os-ts chain=0 excl=false tgt=DIV ae=BODY",
+          "35034 fi ae=DIV",
+          "37285 os-ts chain=0 excl=false tgt=DIV ae=DIV",
+          "37363 fo ae=BODY",
+          "37363 cld ae=BODY"
+        ]
+      },
+      "repro": "node verify/run-all.mjs --only BEHAV-1（可加 --shots 看截图）",
+      "owner": "",
+      "target": "17901",
+      "id": "BEHAV-1",
+      "group": "插件行为实测",
+      "title": "移动视口：输入多行→失焦，[data-input-scroll] 被压到 1 行（1 行 = line-height×1 + padding）",
+      "status": "N/A",
+      "evidence": "⚪ 无法自动断言：上游把 composer 渲染为**不可编辑**（{\"exists\":true,\"tag\":\"DIV\",\"isCE\":false,\"ceAttr\":\"false\",\"taCount\":0,\"editable\":false}）→ \"输入多行→失焦折叠\"无从实测；这不代表折叠失效。归因：0.1.5 自身 dsh-client-ui-conversation/lib/client.js 里该属性由 editor !== null && editable 决定（上游状态，非插件设置）。\n初始：attr=collapsed, scrollClientH=24\n真实触屏点输入框后：activeElement 命中 [data-composer-input]=true, 折叠属性=null（null=已展开）, scrollClientH=52（展开判定 OK）\n注入 8 行文本：ok=true，textLen=0, scrollScrollH=52（内容确实多行增长）\n点卡片外失焦后：attr=collapsed, --meow-smooth-fold-height=24px, scrollClientH=24, 期望 1 行=24（line-height 24 + padding 0，容差 ±3）\nfoldTrace: [\"33944 cld ae=BUTTON\",\"34953 pd ta ae=BODY\",\"34953 exp! ae=BODY\",\"34959 os-ts chain=0 excl=false tgt=DIV ae=BODY\",\"35034 fi ae=DIV\",\"37285 os-ts chain=0 excl=false tgt=DIV ae=DIV\",\"37363 fo ae=BODY\",\"37363 cld ae=BODY\"]"
+    },
+    {
+      "shots": [],
+      "details": {
+        "start": {
+          "pendingStatus": 200,
+          "hostVersion": "0.8.2",
+          "bootToken": "af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc",
+          "error": null
+        },
+        "end": {
+          "pendingStatus": 200,
+          "hostVersion": "0.8.2",
+          "bootToken": "af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc",
+          "error": null
+        }
+      },
+      "repro": "确认实例未被重启后重跑：node verify/run-all.mjs --target 17899=/tmp/meowtest-boot.log",
+      "owner": "",
+      "target": "17901",
+      "id": "ENV-1",
+      "group": "环境稳定性",
+      "title": "实例在跑批期间未被重启 / 未掉线（换 DSH_HOME 也算）",
+      "status": "PASS",
+      "evidence": "起始/结束指纹一致：{\"pendingStatus\":200,\"hostVersion\":\"0.8.2\",\"bootToken\":\"af0oB8DhPzxnMcbONfOaydcSnEFS5WS122XmIsBaBWc\",\"error\":null}（/pending=200, hostVersion=0.8.2）"
+    }
+  ]
+}

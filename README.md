@@ -80,6 +80,10 @@ dsh-meow-smooth：
 **从 GitHub 安装**：源码在 `src/`，`lib/` 不入仓库，安装时 npm 会触发 `prepare` 脚本现场构建，装完即用。
 
 ```powershell
+# 本分支（dsh 0.2.1-rc.2 适配版）
+dsh plugin --profile web add github:Tlrenhb/dsh-meow-smooth
+
+# 上游原仓库（原作者维护，可能尚未包含本次适配）
 dsh plugin --profile web add github:Phant0Meow/dsh-meow-smooth
 ```
 
@@ -90,6 +94,8 @@ dsh plugin --profile web add meow-smooth
 ```
 
 两种方式装完都会自动挂载，重启 DSH web 后启用，无需手工编辑任何组合文件。
+
+> **装完不生效 / 市场里点开关没反应？** 如果你曾在插件市场（dshmarket）里把它关过，市场会把这个"关闭"状态持久化在 `$DSH_HOME/profiles/<profile>/.dsh-market/state.json` 的 `disabled` 列表里，并在每次启动时重新关掉它——光改 `cordis.patch.yml` 或重新安装都没用。把 `meow-smooth` 从该数组里删掉（并确认它名字仍在 `package.json` 的 `dsh.profile.bundles` 列表里），再重启即可。
 
 > npm 源 `dsh plugin --profile web add meow-smooth` 自 `0.6.1` 起恢复可用；`0.6.0` 及更早版本的 `package.json` 带 BOM 会解析失败，请避开。GitHub 源始终最新，推荐优先使用。
 
@@ -103,9 +109,15 @@ dsh plugin --profile web remove meow-smooth
 
 ## 兼容性
 
-支持 **dsh 0.1.5**（含最新的 `0.1.5-rc.1`），同时向下兼容旧版本——升级 dsh 不需要改本插件，也不需要改配置，手机端链接（tailscale serve 指向）照旧。
+**已验证：dsh 0.2.1-rc.2（当前 npm `latest`）** —— 2026-10 逐条实测适配：客户端 DOM 锚点、客户端服务、宿主服务/事件/路由全部按 0.2.1-rc.2 的真实产物重新核对并修复，端到端验证见 [verify/report.md](verify/report.md)，逐条证据见 [docs/adapt-0.2.1-client.md](docs/adapt-0.2.1-client.md) 与 [docs/adapt-0.2.1-host.md](docs/adapt-0.2.1-host.md)。
+
+**dsh 0.1.x（0.1.5 起）继续兼容** —— 跨版本策略是"能力软取 + 优雅降级"：客户端 DOM 锚点保留新旧两形（新版锚点找不到就退回旧形，都找不到就 no-op），宿主服务走 `ctx.get` 软取，缺服务只降级对应功能、绝不抛错。本次适配没有删除任何旧版代码路径。
+
+升级 dsh 不需要改本插件，也不需要改配置，手机端链接（tailscale serve 指向）照旧。
 
 其中的手机访问加速代理会自动分辨宿主版本：老版 dsh 没有响应压缩，代理就压缩历史记录；新版 dsh 自己已经会压缩，代理自动切成纯透传，不再多绕一层。这个判断靠实测能力、不认版本号，所以夹在中间的版本也各有正确行为。
+
+> 本仓库是 [Phant0Meow/dsh-meow-smooth](https://github.com/Phant0Meow/dsh-meow-smooth) 的 **dsh 0.2.1-rc.2 适配分支**（版本 0.8.2），上游为原作者仓库。
 
 
 ### 详细文档

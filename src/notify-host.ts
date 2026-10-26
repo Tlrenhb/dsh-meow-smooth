@@ -125,6 +125,12 @@ function dataDir(): string {
  *
  * @param session - `ctx.sessions.get(id)` 或 `sessions.list()` 给出的会话对象。
  * @returns 事件数组；取不到时返回 undefined。
+ *
+ * dsh 0.2.1-rc.2 复核：`snapshotEvents(fromSeq?, toSeqExclusive?)`
+ * （dsh-session/lib/types/index.d.ts:224）仍是同步全量快照，`Session.events`
+ * 依旧不存在；返回 `readonly SessionEvent[]`，元素形状
+ * `{type, seq, time, data, ignorable?}`（lib/types/types.d.ts:490-513）——
+ * 本函数与事件字段读取路径在新版全部成立。
  */
 export function sessionEventsOf(session: unknown): unknown[] | undefined {
   const candidate = session as { snapshotEvents?: () => readonly unknown[]; events?: unknown } | null | undefined
@@ -323,10 +329,23 @@ export async function probeHostManifestComplete(port: number, attempts = 6, dela
  * 安装 host 通知模块。
  * @param ctx - 注入的 cordis 上下文（结构子集）。
  * @param config - 插件配置（cordis patch 可覆盖）。
+ * @param opts - 可选注入：`port` 返回 dsh 本体真实监听端口（index.ts 传
+ *               `resolveBoundPort(ctx.webServer)`；0.2.x 的权威 getter）。
+ *               缺省回退 `resolveTargetPort()`（argv 解析），跨版本安全。
  * @returns 通知模块句柄。
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function installNotifyHost(ctx: any, config?: NotifyHostConfig): NotifyHostHandle {
+export function installNotifyHost(ctx: any, config?: NotifyHostConfig, opts?: { port?: () => number }): NotifyHostHandle {
+  /** 本体端口：优先调用方注入的权威源，旧调用方/旧版回退 argv。 */
+  const hostPort = (): number => {
+    try {
+      const port = opts?.port?.()
+      if (typeof port === 'number' && Number.isFinite(port) && port > 0 && port < 65536) return port
+    } catch {
+      // 注入源异常（旧版无 webServer.port）→ argv 回退。
+    }
+    return resolveTargetPort()
+  }
   const threshold = typeof config?.longTaskToolCalls === 'number' && config.longTaskToolCalls > 0
     ? config.longTaskToolCalls
     : 7
@@ -807,11 +826,24 @@ const pushOnce = (key: string, fn: () => void): void => {
         }),
       },
     ]
+    // 注册语义（0.2.1-rc.2 核对）：WebRoute.register 签名与返回 disposer 均未变
+    // （dsh-host-webserver/lib/types/index.d.ts:174），但**重复 (kind,path) 会
+    // throw**（:169-170）。注册包 try/catch + 返回 no-op disposer（cordis
+    // SyncEffect 不接受 undefined，见 cordis/lib/types/fiber.d.ts:50）：撞车
+    // 只丢这一条路由并告警，绝不让装配失败。
+    const registerRoute = (route: (typeof routes)[number]): (() => void) => {
+      try {
+        return webServer.register(route) as () => void
+      } catch (error) {
+        console.warn(`[meow-smooth] route ${route.path} registration failed: ${String(error).slice(0, 160)}`)
+        return () => { /* 注册失败：能力降级 */ }
+      }
+    }
     for (const route of routes) {
       if (typeof ctx.effect === 'function') {
-        ctx.effect(() => webServer.register(route), `meow-smooth: ${route.path}`)
+        ctx.effect(() => registerRoute(route), `meow-smooth: ${route.path}`)
       } else {
-        webServer.register(route)
+        registerRoute(route)
       }
     }
     // PWA 安装链接注入 index.html（2026-08-31 让位机制）：职责边界=名字/
@@ -821,14 +853,28 @@ const pushOnce = (key: string, fn: () => void): void => {
     // SVG-only，iOS/安卓均不可安装）→ 照旧注入兜底。apple-touch-icon 两种
     // 情况都注（本体没有，iOS 主屏图标必需）。
     let hostManifestReady = false
-    void probeHostManifestComplete(resolveTargetPort())
+    void probeHostManifestComplete(hostPort())
       .then((ok) => {
         hostManifestReady = ok
         if (ok) console.log('[meow-smooth] host manifest installable-complete — manifest link injection skipped (apple-touch-icon still injected)')
       })
       .catch(() => { /* 探测失败按残缺兜底（保守=维持注入现状） */ })
     if (typeof webServer.tapIndex === 'function' && typeof ctx.effect === 'function') {
-      ctx.effect(() => webServer.tapIndex((html: string) => {
+      // tapIndex 在 0.2.1 仍是受支持的原始 HTML 变换入口（新增的结构化
+      // webserver/index-inject 表格是并行通道，官方明确"Anything not
+      // expressible as a row stays on tapIndex"——dsh-host-webserver/lib/types/
+      // index.d.ts:191-198）。运行时实测（17899）：插件 link 仍被注入
+      // <head>，且排在官方 rel="manifest" 之前，首选生效语义不变。
+      // 同样包 try/catch：注入器注册失败只降级为"不注 PWA link"。
+      const tap = (transform: (html: string) => string): (() => void) => {
+        try {
+          return webServer.tapIndex(transform) as () => void
+        } catch (error) {
+          console.warn(`[meow-smooth] index tap registration failed: ${String(error).slice(0, 160)}`)
+          return () => { /* 注册失败：不注入 PWA link，其余能力不受影响 */ }
+        }
+      }
+      ctx.effect(() => tap((html: string) => {
         const links = (hostManifestReady ? '' : '<link rel="manifest" href="/plugins/meow-smooth/manifest.json">')
           + '<link rel="apple-touch-icon" href="/plugins/meow-smooth/icon-180.png">'
         // 坑：官方 index.html 自带 <link rel="manifest" href="/manifest.webmanifest">

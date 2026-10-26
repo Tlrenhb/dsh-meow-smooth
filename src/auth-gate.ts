@@ -24,7 +24,18 @@
  * 且 PWA 安装与系统通知图标可能由不带 cookie 的浏览器层发起。
  */
 
-/** connection 服务最小面：0.1.5+ 的 requestRejection 与旧版的 trustedHosts。 */
+/** connection 服务最小面：0.1.5+ 的 requestRejection 与旧版的 trustedHosts。
+ *
+ *  dsh 0.2.1-rc.2 复核（2026-10-25）：`requestRejection` 仍在
+ *  dsh-client-connection/lib/types/rpc.d.ts:185，签名
+ *  `requestRejection(request: ConnectionTrustRequest): ConnectionRequestRejection`，
+ *  其中 `ConnectionTrustRequest = { readonly headers: Headers | Readonly<Record<…>> }`
+ *  （:77-80，node:http 的 IncomingMessage 结构上满足：传 req 即可，官方
+ *  dsh-host-open-in-app 正是 `connectionOf(ctx).requestRejection(req)`
+ *  ——lib/index.js:1265），返回值类型
+ *  `ConnectionRequestRejection = 401 | 403 | undefined`（:82），与本文件
+ *  “数字原样写回 / undefined 放行”的语义**完全一致**，无需改动。
+ *  运行时实测（17899）：无 cookie GET /plugins/meow-smooth/pending → 401。 */
 export interface ConnectionAuthFace {
   requestRejection?: (req: unknown) => number | undefined
   /** 旧版（≤0.1.2）Host fence 的权威列表：bundle patch 注入的

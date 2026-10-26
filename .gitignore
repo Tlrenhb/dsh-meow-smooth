@@ -10,5 +10,6 @@ scripts/feishu-relay.config.json
 package-lock.json
 
 shots/
+!verify/shots/
 *.tgz
 scripts/Delete_*

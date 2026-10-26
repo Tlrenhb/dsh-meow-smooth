@@ -77,7 +77,7 @@ dsh-meow-smooth：
 
 ## 安装
 
-**从 GitHub 安装**：源码在 `src/`，`lib/` 不入仓库，安装时 npm 会触发 `prepare` 脚本现场构建，装完即用。
+**从 GitHub 安装**：源码在 `src/`，`lib/` 不入仓库，安装时会触发 `prepare` 脚本现场构建，装完即用。
 
 ```powershell
 # 本分支（dsh 0.2.1-rc.2 适配版）
@@ -87,11 +87,33 @@ dsh plugin --profile web add github:Tlrenhb/dsh-meow-smooth
 dsh plugin --profile web add github:Phant0Meow/dsh-meow-smooth
 ```
 
+> **pnpm 12 起，git 源首次安装会被拦一次**（`needs to execute build scripts but is not in the "allowBuilds" allowlist`）：
+> 第一次 `add` 会失败并**打印出需要加白名单的精确键**，形如
+> `meow-smooth@https://codeload.github.com/Tlrenhb/dsh-meow-smooth/tar.gz/<commit>`。
+> 把它加到该 profile 的 `pnpm-workspace.yaml`（注意键里带 commit，换一版就得换一行）：
+>
+> ```yaml
+> allowBuilds:
+>   'meow-smooth@https://codeload.github.com/Tlrenhb/dsh-meow-smooth/tar.gz/<commit>': true
+> ```
+>
+> 再执行一次同样的 `add` 即可。`0.8.2` 实测：这样装出来的 `lib/client.js` 与仓库验证版逐字节相同
+> （sha256 `f036a03d0e7bd6c3…`），`dsh` 本体也会在报错里直接给出这行配置。
+
+**从 tarball 安装**（不想折腾 `allowBuilds` 的话最省事，包内已含构建产物）：
+
+```powershell
+dsh plugin --profile web add /path/to/meow-smooth-0.8.2.tgz
+```
+
 **从 npm 安装**：包内已含构建产物 `lib/index.js` 与 `lib/client.js`，安装时不再构建。
 
 ```powershell
 dsh plugin --profile web add meow-smooth
 ```
+
+> `meow-smooth@0.8.1` 及更早的 npm 版本**没有**本次 dsh 0.2.1-rc.2 适配（0.8.2 起才有）；
+> 需要新版请用上面的 GitHub 源或 tarball。
 
 两种方式装完都会自动挂载，重启 DSH web 后启用，无需手工编辑任何组合文件。
 
